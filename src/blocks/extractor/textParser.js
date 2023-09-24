@@ -9,9 +9,10 @@ export class TextParser {
   /**
    * Reads the data from a text file, using frontmatter.
    * @param {string} filePath - Path of the given file
+   * @param {boolean} includeRawAttributes - Whether to include the raw attributes in the returned object
    * @returns {Promise<object>} A promise that resolves to the object containing the file's data.
    */
-  static fromPath = filePath => {
+  static fromPath = (filePath, includeRawAttributes = false) => {
     const fileName = filePath.match(/.*\/([^/]*)$/)[1];
     return readFile(filePath, 'utf8').then(content => {
       const { body, attributes } = frontmatter(content);
@@ -20,9 +21,11 @@ export class TextParser {
         language = null,
         ...restAttributes
       } = attributes;
+      const rawAttributes = includeRawAttributes ? attributes : undefined;
       return {
         body,
         ...restAttributes,
+        rawAttributes,
         dateModified: new Date(dateModified),
         language,
         fileName,

@@ -1,0 +1,19 @@
+name: Check content quality
+on: [pull_request_target]
+
+jobs:
+  check-content-quality:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        list-files: shell
+        filters: |
+          markdown:
+            - added|modified: 'content/snippets/**/*.md'
+    - name: Check Markdown content quality
+      if: ${{ steps.filter.outputs.markdown == 'true' }}
+      run: npm check ${{ steps.filter.outputs.markdown_files }}
+
